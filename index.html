@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SlotsGem — Bonus na start</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --gold: #fed402;
+      --gold-hot: #ffe56a;
+      --ink: #16120a;
+      --bg: #07060f;
+      --card: rgba(16, 12, 32, 0.72);
+      --line: rgba(255, 255, 255, 0.08);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      min-height: 100%;
+      background: var(--bg);
+      color: #fff;
+      font-family: Montserrat, system-ui, sans-serif;
+    }
+
+    body { position: relative; overflow-x: hidden; }
+
+    a { color: inherit; }
+
+    .scene {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background:
+        radial-gradient(ellipse 70% 50% at 50% 18%, rgba(124, 42, 210, 0.5), transparent 68%),
+        radial-gradient(ellipse 32% 28% at 12% 70%, rgba(88, 20, 160, 0.35), transparent 70%),
+        radial-gradient(ellipse 34% 26% at 88% 62%, rgba(180, 40, 200, 0.28), transparent 70%),
+        #07060f;
+    }
+
+    .crystal, .coin, .spark {
+      position: absolute;
+      pointer-events: none;
+    }
+
+    .crystal { filter: drop-shadow(0 0 18px rgba(168, 85, 247, 0.5)); animation: drift 7s ease-in-out infinite; }
+    .crystal.c1 { left: 4%; top: 12%; width: 78px; animation-delay: 0s; }
+    .crystal.c2 { right: -28px; top: 4%; width: 110px; animation-delay: -1.6s; opacity: 0.75; }
+    .crystal.c3 { left: 8%; bottom: 18%; width: 64px; animation-delay: -3s; opacity: 0.55; }
+    .crystal.c4 { right: -36px; bottom: 8%; width: 86px; animation-delay: -2.2s; opacity: 0.4; }
+    .crystal.c5 { left: 42%; top: 6%; width: 46px; animation-delay: -4s; opacity: 0.45; }
+
+    .coin {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 35% 30%, #fff4b0, #fed402 42%, #c48a00 78%);
+      box-shadow: 0 8px 18px rgba(254, 212, 2, 0.28), inset 0 0 0 3px rgba(120, 70, 0, 0.35);
+      animation: coin 8s ease-in-out infinite;
+    }
+    .coin::after {
+      content: "€";
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      color: #6a4300;
+      font-weight: 900;
+      font-size: 16px;
+    }
+    .coin.k1 { left: 18%; top: 22%; animation-delay: 0s; }
+    .coin.k2 { right: 18%; top: 30%; width: 28px; height: 28px; animation-delay: -2s; }
+    .coin.k3 { left: 22%; bottom: 28%; width: 24px; height: 24px; animation-delay: -4.5s; }
+    .coin.k4 { right: 22%; bottom: 16%; animation-delay: -1s; }
+
+    .spark {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--gold);
+      box-shadow: 0 0 12px var(--gold);
+      animation: twinkle 3.4s ease-in-out infinite;
+    }
+    .spark.s1 { left: 24%; top: 16%; }
+    .spark.s2 { right: 26%; top: 18%; animation-delay: 0.8s; }
+    .spark.s3 { left: 14%; top: 48%; animation-delay: 1.5s; }
+    .spark.s4 { right: 12%; top: 52%; animation-delay: 2.1s; }
+    .spark.s5 { left: 48%; bottom: 12%; animation-delay: 0.4s; }
+
+    .cursor-glow {
+      position: fixed;
+      width: 280px;
+      height: 280px;
+      margin: -140px 0 0 -140px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(254, 212, 2, 0.16), transparent 68%);
+      pointer-events: none;
+      z-index: 1;
+      mix-blend-mode: screen;
+      transition: opacity 0.3s;
+    }
+
+    @keyframes drift {
+      0%, 100% { transform: translateY(0) rotate(-8deg); }
+      50% { transform: translateY(-16px) rotate(8deg); }
+    }
+    @keyframes coin {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-18px) rotate(18deg); }
+    }
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.25; transform: scale(0.7); }
+      50% { opacity: 1; transform: scale(1.3); }
+    }
+    @keyframes shine {
+      0% { transform: translateX(-140%) skewX(-18deg); }
+      60%, 100% { transform: translateX(240%) skewX(-18deg); }
+    }
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 10px 28px rgba(254, 212, 2, 0.28); }
+      50% { box-shadow: 0 14px 40px rgba(254, 212, 2, 0.5); }
+    }
+
+    .wrap {
+      position: relative;
+      z-index: 2;
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 48px;
+    }
+
+    .top {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 28px;
+    }
+
+    .logo { height: 34px; width: auto; display: block; }
+
+    .hero {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    .panel {
+      background: linear-gradient(180deg, rgba(18, 12, 36, 0.94), rgba(8, 6, 16, 0.92));
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+      backdrop-filter: blur(8px);
+    }
+
+    .offer { padding: 36px 36px 32px; }
+
+    .kicker {
+      display: inline-block;
+      margin-bottom: 16px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(254, 212, 2, 0.1);
+      border: 1px solid rgba(254, 212, 2, 0.35);
+      color: var(--gold);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      font-size: clamp(40px, 5.4vw, 68px);
+      font-weight: 900;
+      line-height: 0.95;
+      letter-spacing: -0.03em;
+    }
+    h1 .gold {
+      display: block;
+      margin-top: 6px;
+      color: var(--gold);
+      text-shadow: 0 0 28px rgba(254, 212, 2, 0.3);
+    }
+
+    .sub {
+      margin-top: 14px;
+      color: rgba(255, 255, 255, 0.74);
+      font-size: 16px;
+      font-weight: 600;
+      max-width: 420px;
+    }
+
+    .stats {
+      display: flex;
+      gap: 10px;
+      margin-top: 22px;
+      flex-wrap: wrap;
+    }
+    .stat {
+      min-width: 120px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--line);
+    }
+    .stat b {
+      display: block;
+      color: var(--gold);
+      font-size: 18px;
+      font-weight: 900;
+    }
+    .stat span {
+      display: block;
+      margin-top: 2px;
+      color: rgba(255, 255, 255, 0.55);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .btn {
+      position: relative;
+      overflow: hidden;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 26px;
+      min-width: 260px;
+      height: 58px;
+      padding: 0 28px;
+      border-radius: 12px;
+      background: linear-gradient(180deg, var(--gold-hot) 0%, var(--gold) 55%, #f0c200 100%);
+      color: var(--ink);
+      font-size: 17px;
+      font-weight: 900;
+      text-decoration: none;
+      animation: pulse 2.4s ease-in-out infinite;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55);
+    }
+    .btn::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 40%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.55), transparent);
+      animation: shine 2.8s ease-in-out infinite;
+    }
+    .btn:hover { filter: brightness(1.06); transform: translateY(-2px); }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      max-width: 720px;
+      margin: 18px auto 0;
+    }
+    .step {
+      padding: 16px 16px 14px;
+      border-radius: 16px;
+      background: rgba(12, 9, 24, 0.9);
+      border: 1px solid var(--line);
+    }
+    .step i {
+      display: grid;
+      place-items: center;
+      width: 28px;
+      height: 28px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      background: var(--gold);
+      color: var(--ink);
+      font-style: normal;
+      font-weight: 900;
+      font-size: 13px;
+    }
+    .step b { display: block; font-size: 14px; }
+    .step span {
+      display: block;
+      margin-top: 4px;
+      color: rgba(255, 255, 255, 0.58);
+      font-size: 12px;
+      font-weight: 600;
+      line-height: 1.4;
+    }
+
+    .bottom {
+      max-width: 720px;
+      margin: 28px auto 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 18px 20px;
+    }
+    .bottom p { font-weight: 800; font-size: 16px; }
+    .bottom p span { color: var(--gold); }
+    .bottom .btn { margin-top: 0; }
+
+    .legal {
+      margin-top: 18px;
+      text-align: center;
+      color: rgba(255, 255, 255, 0.35);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    @media (max-width: 860px) {
+      .steps { grid-template-columns: 1fr; }
+      .offer { padding: 26px 20px 22px; }
+      .bottom { flex-direction: column; align-items: stretch; text-align: center; }
+      .bottom .btn { width: 100%; }
+      .crystal.c3, .crystal.c5, .coin.k3 { display: none; }
+    }
+    @media (max-width: 640px) {
+      .btn { width: 100%; min-width: 0; }
+      .top { margin-bottom: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="scene" aria-hidden="true">
+    <svg class="crystal c1" viewBox="0 0 80 140"><path d="M40 2 L72 48 L58 138 L22 138 L8 48 Z" fill="url(#g1)"/><defs><linearGradient id="g1" x1="8" y1="2" x2="72" y2="138" gradientUnits="userSpaceOnUse"><stop stop-color="#e9b4ff"/><stop offset="0.45" stop-color="#9b3dff"/><stop offset="1" stop-color="#4c148c"/></linearGradient></defs></svg>
+    <svg class="crystal c2" viewBox="0 0 80 140"><path d="M40 2 L74 42 L60 138 L18 138 L6 42 Z" fill="url(#g2)"/><defs><linearGradient id="g2" x1="6" y1="2" x2="74" y2="138" gradientUnits="userSpaceOnUse"><stop stop-color="#ff8af0"/><stop offset="0.5" stop-color="#b026e6"/><stop offset="1" stop-color="#3a0d78"/></linearGradient></defs></svg>
+    <svg class="crystal c3" viewBox="0 0 80 140"><path d="M40 6 L70 50 L54 134 L24 134 L10 50 Z" fill="url(#g3)"/><defs><linearGradient id="g3" x1="10" y1="6" x2="70" y2="134" gradientUnits="userSpaceOnUse"><stop stop-color="#d7a6ff"/><stop offset="1" stop-color="#5b1d9e"/></linearGradient></defs></svg>
+    <svg class="crystal c4" viewBox="0 0 80 140"><path d="M40 4 L76 46 L58 136 L20 136 L4 46 Z" fill="url(#g4)"/><defs><linearGradient id="g4" x1="4" y1="4" x2="76" y2="136" gradientUnits="userSpaceOnUse"><stop stop-color="#f0c4ff"/><stop offset="0.55" stop-color="#7c2bdc"/><stop offset="1" stop-color="#2a0858"/></linearGradient></defs></svg>
+    <svg class="crystal c5" viewBox="0 0 80 140"><path d="M40 2 L68 40 L52 130 L28 130 L12 40 Z" fill="#b45cff"/></svg>
+    <span class="coin k1"></span>
+    <span class="coin k2"></span>
+    <span class="coin k3"></span>
+    <span class="coin k4"></span>
+    <span class="spark s1"></span>
+    <span class="spark s2"></span>
+    <span class="spark s3"></span>
+    <span class="spark s4"></span>
+    <span class="spark s5"></span>
+  </div>
+  <div class="cursor-glow" id="glow" hidden></div>
+
+  <div class="wrap">
+    <header class="top">
+      <img class="logo" src="slotsgem_slotsgem.svg" alt="SlotsGem">
+    </header>
+
+    <section class="hero">
+      <div class="panel offer">
+        <p class="kicker">Bonus dla graczy na start</p>
+        <h1>
+          do <span id="eur">0</span> EUR
+          <span class="gold">+ <span id="fs">0</span> FS</span>
+        </h1>
+        <p class="sub">Odpal konto i odbierz pakiet na start. Jeden klik i jesteś w rejestracji.</p>
+        <div class="stats">
+          <div class="stat"><b>1 450 EUR</b><span>Bonus</span></div>
+          <div class="stat"><b>225 FS</b><span>Free spiny</span></div>
+          <div class="stat"><b>Start</b><span>Dla nowych</span></div>
+        </div>
+        <a class="btn" href="https://mio.novarao.com/redirect.aspx?pid=115597&amp;lpid=601&amp;bid=1487">Odbierz bonus</a>
+      </div>
+    </section>
+
+    <section class="steps">
+      <article class="step"><i>1</i><b>Kliknij bonus</b><span>Przycisk prowadzi prosto do rejestracji SlotsGem.</span></article>
+      <article class="step"><i>2</i><b>Załóż konto</b><span>Nowy gracz wchodzi w pakiet na start.</span></article>
+      <article class="step"><i>3</i><b>Graj</b><span>Do 1 450 EUR i 225 free spinów czeka na koncie.</span></article>
+    </section>
+
+    <div class="panel bottom">
+      <p>Bonus na start <span>do 1 450 EUR + 225 FS</span></p>
+      <a class="btn" href="https://mio.novarao.com/redirect.aspx?pid=115597&amp;lpid=601&amp;bid=1487">Odbierz bonus</a>
+    </div>
+    <p class="legal">18+ · Graj odpowiedzialnie</p>
+  </div>
+
+  <script>
+    function countTo(el, target, duration) {
+      const start = performance.now();
+      function tick(now) {
+        const p = Math.min(1, (now - start) / duration);
+        const eased = 1 - Math.pow(1 - p, 3);
+        const value = Math.round(target * eased);
+        el.textContent = String(value).replace(/\B(?=(\d{3})+(?!\d))/g, "\u00a0");
+        if (p < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    }
+    countTo(document.getElementById("eur"), 1450, 1200);
+    countTo(document.getElementById("fs"), 225, 1000);
+
+    const glow = document.getElementById("glow");
+    window.addEventListener("pointermove", (e) => {
+      glow.hidden = false;
+      glow.style.left = e.clientX + "px";
+      glow.style.top = e.clientY + "px";
+    });
+  </script>
+</body>
+</html>
