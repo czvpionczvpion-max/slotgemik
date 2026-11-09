@@ -252,6 +252,136 @@
     }
     .btn:hover { filter: brightness(1.06); transform: translateY(-2px); }
 
+    .promo {
+      position: relative;
+      margin-top: 22px;
+      padding: 16px 16px 14px;
+      border-radius: 18px;
+      text-align: center;
+      background:
+        radial-gradient(ellipse 80% 80% at 50% 70%, rgba(254, 212, 2, 0.16), transparent 70%),
+        linear-gradient(180deg, rgba(254, 212, 2, 0.1), rgba(254, 212, 2, 0.03));
+      border: 1px solid rgba(254, 212, 2, 0.55);
+      box-shadow: 0 0 0 4px rgba(254, 212, 2, 0.08), 0 0 36px rgba(254, 212, 2, 0.22);
+      animation: promoGlow 1.8s ease-in-out infinite;
+    }
+
+    .promo-warn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      color: #fff8d6;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .promo-warn i {
+      display: grid;
+      place-items: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--gold);
+      color: var(--ink);
+      font-style: normal;
+      font-weight: 900;
+      animation: warnPop 1.1s ease-in-out infinite;
+    }
+
+    .code {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: min(100%, 340px);
+      margin: 12px auto 0;
+      padding: 12px 16px 11px;
+      border-radius: 14px;
+      border: 2px dashed rgba(254, 212, 2, 0.85);
+      background: #100c08;
+      color: inherit;
+      font-family: inherit;
+      cursor: pointer;
+      transition: transform 0.15s ease, border-color 0.15s ease;
+    }
+    .code:hover { transform: translateY(-2px); border-color: #fff4b0; }
+    .code:active { transform: translateY(0) scale(0.99); }
+    .code.copied { border-style: solid; border-color: #fff4b0; background: #1a1406; }
+
+    .code-label {
+      color: rgba(255, 244, 190, 0.7);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+    .code:focus-visible {
+      outline: 2px solid #fff4b0;
+      outline-offset: 3px;
+    }
+    .code-value {
+      margin-top: 2px;
+      color: var(--gold);
+      font-size: clamp(36px, 7vw, 52px);
+      font-weight: 900;
+      letter-spacing: 0.34em;
+      text-indent: 0.34em;
+      line-height: 1;
+      text-shadow: 0 0 18px rgba(254, 212, 2, 0.65);
+      animation: codeKick 1.6s ease-in-out infinite;
+    }
+    .code.copied .code-value { animation: none; text-shadow: 0 0 24px rgba(254, 212, 2, 0.9); }
+    .code-hint {
+      margin-top: 6px;
+      color: rgba(255, 255, 255, 0.62);
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .code.copied .code-hint { color: var(--gold); }
+
+    .shots {
+      position: absolute;
+      inset: -6px;
+      z-index: 3;
+      pointer-events: none;
+    }
+    .shots i {
+      position: absolute;
+      left: var(--x);
+      top: var(--y);
+      width: 5px;
+      height: 28px;
+      margin: -14px 0 0 -2.5px;
+      border-radius: 5px;
+      background: linear-gradient(#fff, var(--gold-hot) 35%, transparent);
+      box-shadow: 0 0 12px var(--gold), 0 0 4px #fff;
+      animation: shoot 1.15s ease-out infinite;
+      animation-delay: calc(var(--i) * 0.08s);
+    }
+
+    @keyframes promoGlow {
+      0%, 100% { box-shadow: 0 0 0 4px rgba(254, 212, 2, 0.08), 0 0 24px rgba(254, 212, 2, 0.16); }
+      50% { box-shadow: 0 0 0 6px rgba(254, 212, 2, 0.16), 0 0 42px rgba(254, 212, 2, 0.38); }
+    }
+    @keyframes warnPop {
+      0%, 100% { transform: scale(1); }
+      40% { transform: scale(1.18); }
+      55% { transform: scale(0.92); }
+    }
+    @keyframes codeKick {
+      0%, 100% { transform: scale(1); }
+      42% { transform: scale(1.07); }
+    }
+    @keyframes shoot {
+      0% { opacity: 0; transform: rotate(var(--rot)) translateY(0) scaleY(0.35); }
+      20% { opacity: 1; }
+      100% { opacity: 0; transform: rotate(var(--rot)) translateY(-52px) scaleY(1.2); }
+    }
+
     .steps {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -319,6 +449,7 @@
     @media (max-width: 640px) {
       .btn { width: 100%; min-width: 0; }
       .top { margin-bottom: 16px; }
+      .promo-warn { font-size: 11px; letter-spacing: 0.04em; }
     }
   </style>
 </head>
@@ -359,14 +490,36 @@
           <div class="stat"><b>225 FS</b><span>Free spiny</span></div>
           <div class="stat"><b>Start</b><span>Dla nowych</span></div>
         </div>
+        <div class="promo">
+          <p class="promo-warn"><i>!</i> Bez kodu nie odbierzesz bonusów</p>
+          <button class="code" type="button" id="copyCode" aria-label="Skopiuj kod promocyjny CIOS">
+            <span class="code-label">Kod promocyjny</span>
+            <span class="code-value">CIOS</span>
+            <span class="code-hint" id="copyHint">Kliknij, aby skopiować</span>
+            <span class="shots" aria-hidden="true">
+              <i style="--x:0%;--y:0%;--rot:-40deg;--i:0"></i>
+              <i style="--x:50%;--y:0%;--rot:0deg;--i:1"></i>
+              <i style="--x:100%;--y:0%;--rot:40deg;--i:2"></i>
+              <i style="--x:100%;--y:50%;--rot:90deg;--i:3"></i>
+              <i style="--x:100%;--y:100%;--rot:140deg;--i:4"></i>
+              <i style="--x:50%;--y:100%;--rot:180deg;--i:5"></i>
+              <i style="--x:0%;--y:100%;--rot:-140deg;--i:6"></i>
+              <i style="--x:0%;--y:50%;--rot:-90deg;--i:7"></i>
+              <i style="--x:25%;--y:0%;--rot:-18deg;--i:4"></i>
+              <i style="--x:75%;--y:0%;--rot:18deg;--i:6"></i>
+              <i style="--x:25%;--y:100%;--rot:-162deg;--i:2"></i>
+              <i style="--x:75%;--y:100%;--rot:162deg;--i:5"></i>
+            </span>
+          </button>
+        </div>
         <a class="btn" href="https://mio.novarao.com/redirect.aspx?pid=115597&amp;lpid=601&amp;bid=1487">Odbierz bonus</a>
       </div>
     </section>
 
     <section class="steps">
-      <article class="step"><i>1</i><b>Kliknij bonus</b><span>Przycisk prowadzi prosto do rejestracji SlotsGem.</span></article>
-      <article class="step"><i>2</i><b>Załóż konto</b><span>Nowy gracz wchodzi w pakiet na start.</span></article>
-      <article class="step"><i>3</i><b>Graj</b><span>Do 1 450 EUR i 225 free spinów czeka na koncie.</span></article>
+      <article class="step"><i>1</i><b>Skopiuj CIOS</b><span>Bez tego kodu bonusów nie da się odebrać.</span></article>
+      <article class="step"><i>2</i><b>Załóż konto</b><span>Przycisk prowadzi prosto do rejestracji SlotsGem.</span></article>
+      <article class="step"><i>3</i><b>Wpisz kod</b><span>CIOS odpala do 1 450 EUR i 225 free spinów.</span></article>
     </section>
 
     <div class="panel bottom">
@@ -390,6 +543,28 @@
     }
     countTo(document.getElementById("eur"), 1450, 1200);
     countTo(document.getElementById("fs"), 225, 1000);
+
+    const copyBtn = document.getElementById("copyCode");
+    const copyHint = document.getElementById("copyHint");
+    copyBtn.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText("CIOS");
+      } catch (err) {
+        const field = document.createElement("textarea");
+        field.value = "CIOS";
+        document.body.appendChild(field);
+        field.select();
+        document.execCommand("copy");
+        field.remove();
+      }
+      copyHint.textContent = "Skopiowano";
+      copyBtn.classList.add("copied");
+      clearTimeout(copyBtn._timer);
+      copyBtn._timer = setTimeout(() => {
+        copyHint.textContent = "Kliknij, aby skopiować";
+        copyBtn.classList.remove("copied");
+      }, 1600);
+    });
 
     const glow = document.getElementById("glow");
     window.addEventListener("pointermove", (e) => {
